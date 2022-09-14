@@ -68,32 +68,9 @@ jobs:
           REPO_VERSION_MOST_RECENT=$(git describe --tags --always --abbrev=0)
           REPO_VERSION_DESIRED=$(cargo pkgid --manifest-path libvcx/Cargo.toml | cut -d# -f2 | cut -d: -f2)
           echo "Highest released version was: $REPO_VERSION_MOST_RECENT, desired version (specified in libvcx/Cargo.toml) is $REPO_VERSION_DESIRED"
-
+          PUBLISH_VERSION="$REPO_VERSION_DESIRED.${{ github.run_number }}"
           RELEASE="false"
           PRERELEASE="false"
-
-          if [[ "$IS_FORK" == "false" ]]; then
-            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-              if [[ "${{ contains(github.event.pull_request.labels.*.name, 'pre-release') }}" == "true" ]]; then
-                PRERELEASE="true"
-              fi;
-            elif [[ "${{ github.event_name }}" == "push" ]]; then
-              if [[ "$BRANCH_NAME" == "main" && "$REPO_VERSION_DESIRED" != "$REPO_VERSION_MOST_RECENT" ]]; then
-                PUBLISH_VERSION="$REPO_VERSION_DESIRED"
-                RELEASE="true"
-                echo "This is push to main, and version was bumped from $REPO_VERSION_MOST_RECENT to $REPO_VERSION_DESIRED. Will publish a release of $REPO_VERSION_DESIRED."
-              fi;
-            fi;
-
-            if [[ -z "$PUBLISH_VERSION" ]]; then
-              PUBLISH_VERSION="$REPO_VERSION_MOST_RECENT-$BRANCH_NAME-${{ github.run_number }}"
-            fi;
-
-            echo "CI will publish artifacts at version: $PUBLISH_VERSION"
-          else
-            echo "This PR is from fork, nothing will be published because the CI wouldn't be able to access repo secrets to perform publish."
-            PUBLISH_VERSION=""
-          fi;
 
           LIBVCX_SOURCE_HASH=${{ hashFiles('libvcx') }}
           ARIESVCX_SOURCE_HASH=${{ hashFiles('aries_vcx') }}
