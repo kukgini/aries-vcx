@@ -128,7 +128,7 @@ jobs:
     - name: Build iOS wrapper
       run: |
         ./wrappers/ios/ci/build.sh
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
-        name: libvcx-ios-${{ env.PUBLISH_VERSION }}-device.zip
-        path: /tmp/artifacts/libvcx-ios-${{ env.PUBLISH_VERSION }}-device.zip
+        name: libvcx-ios-${{ env.PUBLISH_VERSION }}-universal.zip
+        path: /tmp/artifacts/libvcx-ios-${{ env.PUBLISH_VERSION }}-universal.zip
